@@ -11,4 +11,7 @@ import scrapy
 class KarinItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
+    posted_date = scrapy.Field()
+    title = scrapy.Field()
+    body = scrapy.Field()
     pass
