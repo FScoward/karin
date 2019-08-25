@@ -11,11 +11,18 @@ class BlogSpider(scrapy.Spider):
     def parse(self, response: scrapy.http.TextResponse):
         item = KarinItem()
         title = response.xpath('/html/body/div/div/div[1]/div/div/div[1]/article/div[1]/div[2]/h3/text()').extract()
+        posted_date = response.xpath('/html/body/div/div/div[1]/div/div/div[1]/article/div[3]/ul/li/text()').extract()
         item['body'] = "".join(self.getResponseBody(response))
-        item['title'] = "".join(title).replace(u'\xa0', u"").replace(u'\n', u'')
+        item['title'] = self.remover("".join(title))
+        item['posted_date'] = self.remover("".join(posted_date))
         return item
 
-    def getResponseBody(self, response):
+    def getResponseBody(self, response) -> str:
         body = response.xpath('/html/body/div/div/div[1]/div/div/div[1]/article/div[2]/div/div[2]/div[3]//text()')
-        strBody = "".join(body.extract()).replace(u'\xa0', u"").replace(u'\n', u'')
-        return strBody
+        strBody = "".join(body.extract())
+        return self.remover(strBody)
+
+    @staticmethod
+    def remover(target) -> str:
+        return target.replace(u'\xa0', u"").strip().replace(u'\n', u'')
+
